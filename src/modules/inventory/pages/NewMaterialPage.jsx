@@ -3,6 +3,63 @@ import { useNavigate, useParams } from "react-router-dom";
 import AppLayout from "../../../shared/layout/AppLayout";
 import { useInventory } from "../context/InventoryContext";
 
+function toDateInputValue(value) {
+  const fallback = new Date().toISOString().split("T")[0];
+
+  if (!value || typeof value !== "string") return fallback;
+
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+
+  const parsed = new Date(value);
+  if (!Number.isNaN(parsed.getTime())) {
+    return parsed.toISOString().split("T")[0];
+  }
+
+  const match = value
+    .trim()
+    .toLowerCase()
+    .match(/^(\d{1,2})\s+de\s+([a-záéíóú]+)\s+de\s+(\d{4})$/i);
+
+  if (match) {
+    const [, dayRaw, monthRaw, year] = match;
+    const monthMap = {
+      ene: "01",
+      enero: "01",
+      feb: "02",
+      febrero: "02",
+      mar: "03",
+      marzo: "03",
+      abr: "04",
+      abril: "04",
+      may: "05",
+      mayo: "05",
+      jun: "06",
+      junio: "06",
+      jul: "07",
+      julio: "07",
+      ago: "08",
+      agosto: "08",
+      sep: "09",
+      sept: "09",
+      septiembre: "09",
+      oct: "10",
+      octubre: "10",
+      nov: "11",
+      noviembre: "11",
+      dic: "12",
+      diciembre: "12",
+    };
+
+    const month = monthMap[monthRaw];
+    if (month) {
+      const day = dayRaw.padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+  }
+
+  return fallback;
+}
+
 export default function NewMaterialPage() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -35,7 +92,7 @@ export default function NewMaterialPage() {
           stock: materialToEdit.stock ?? "",
           minStock: materialToEdit.minStock ?? "",
           maxStock: materialToEdit.maxStock ?? "",
-          lastEntry: materialToEdit.lastEntry || new Date().toISOString().split("T")[0],
+          lastEntry: toDateInputValue(materialToEdit.lastEntry),
         });
       }
     }
@@ -73,7 +130,7 @@ export default function NewMaterialPage() {
       stock: Number(form.stock),
       minStock: Number(form.minStock),
       maxStock: Number(form.maxStock),
-      lastEntry: form.lastEntry,
+      lastEntry: form.lastEntry
     };
 
     try {

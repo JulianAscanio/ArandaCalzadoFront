@@ -16,7 +16,7 @@ export default function NewOrderPage() {
     product: "",
     quantity: 1,
     total: "",
-    status: "pending",
+    status: "",
     additional_info: "",
   });
 
@@ -147,6 +147,9 @@ export default function NewOrderPage() {
                   value={form.status}
                   onChange={handleChange}
                 >
+                  <option value="" disabled>
+                    Seleccione estado del pedido
+                  </option>
                   <option value="pending">Pendiente</option>
                   <option value="in_production">En Producción</option>
                   <option value="finished">Terminado</option>
