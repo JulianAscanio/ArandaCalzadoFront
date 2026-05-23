@@ -4,6 +4,7 @@ import SearchBar from "../components/SearchBar";
 import CategoryFilters from "../components/CategoryFilters";
 import InventoryTable from "../components/InventoryTable";
 import MovementModal from "../components/MovementModal";
+import MovementsHistoryModal from "../components/MovementsHistoryModal";
 import { useInventory } from "../context/InventoryContext";
 import AppLayout from "../../../shared/layout/AppLayout";
 
@@ -11,6 +12,7 @@ export default function InventoryPage() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("Todos");
   const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const { materials } = useInventory();
 
@@ -44,18 +46,36 @@ export default function InventoryPage() {
           </p>
         </div>
 
-        <Link
-          to="/nuevo-material"
-          style={{
-            textDecoration: "none",
-            background: "#b1223a",
-            color: "white",
-            padding: "12px 16px",
-            borderRadius: "12px",
-          }}
-        >
-          + Nuevo material
-        </Link>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button
+            onClick={() => setIsHistoryOpen(true)}
+            style={{
+              textDecoration: "none",
+              background: "#e8ded8",
+              color: "#4b3a35",
+              padding: "12px 16px",
+              borderRadius: "12px",
+              fontWeight: "600",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            Ver historial
+          </button>
+          <Link
+            to="/nuevo-material"
+            style={{
+              textDecoration: "none",
+              background: "#b1223a",
+              color: "white",
+              padding: "12px 16px",
+              borderRadius: "12px",
+              fontWeight: "600",
+            }}
+          >
+            + Nuevo material
+          </Link>
+        </div>
       </div>
 
       <div style={{ marginBottom: "20px" }}>
@@ -75,6 +95,13 @@ export default function InventoryPage() {
           <MovementModal
             material={selectedMaterial}
             onClose={() => setSelectedMaterial(null)}
+          />
+        )
+      }
+      {
+        isHistoryOpen && (
+          <MovementsHistoryModal
+            onClose={() => setIsHistoryOpen(false)}
           />
         )
       }

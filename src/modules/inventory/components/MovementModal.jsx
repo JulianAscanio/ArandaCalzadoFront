@@ -9,31 +9,34 @@ export default function MovemmentModal({ material, onClose }) {
     const [reason, setReason] = useState("");
     const [hoveredButton, setHoveredButton] = useState(null);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         const numericQuantity = Number(quantity);
 
         if (!quantity || Number(quantity) <= 0) {
-            alert("la cantidad debe ser mayor a 0");
+            alert("La cantidad debe ser mayor a 0");
             return;
         }
 
         if (movementType === "salida" && numericQuantity > material.stock) {
-            alert("No hay stock suficiente para registrar la salida")
+            alert("No hay stock suficiente para registrar la salida");
             return;
         }
 
-        registerMovement({
-            materialId: material.id,
-            materialName: material.name,
-            movementType,
-            quantity: numericQuantity,
-            reason,
-        });
-
-        alert("Movimiento registrado correctamente")
-        onClose();
+        try {
+            await registerMovement({
+                materialId: material.id,
+                materialName: material.name,
+                movementType,
+                quantity: numericQuantity,
+                reason,
+            });
+            alert("Movimiento registrado correctamente");
+            onClose();
+        } catch (error) {
+            alert(error.message);
+        }
     };
 
     return (

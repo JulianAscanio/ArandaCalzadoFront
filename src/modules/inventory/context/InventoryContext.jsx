@@ -5,16 +5,14 @@ export const InventoryContext = createContext();
 
 export function InventoryProvider({ children }) {
     const [materials, setMaterials] = useState([]);
-    const [movements, setMovements] = useState(() => {
-        const savedMovements = localStorage.getItem("inventory-movements");
-        return savedMovements ? JSON.parse(savedMovements) : [];
-    });
+    const [movements, setMovements] = useState([]);
 
     const { token, logout } = useAuth();
 
     useEffect(() => {
         if (token) {
             fetchMaterials();
+            fetchMovements();
         }
     }, [token]);
 
@@ -38,9 +36,25 @@ export function InventoryProvider({ children }) {
         }
     };
 
-    useEffect(() => {
-        localStorage.setItem("inventory-movements", JSON.stringify(movements));
-    }, [movements]);
+    const fetchMovements = async () => {
+        try {
+            const response = await fetch("http://localhost:8000/api/inventario/movimientos/", {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+            if (response.status === 401) {
+                logout();
+                return;
+            }
+            if (response.ok) {
+                const data = await response.json();
+                setMovements(data);
+            }
+        } catch (error) {
+            console.error("Error fetching movements:", error);
+        }
+    };
 
     const addMaterial = async (newMaterial) => {
         try {
@@ -56,6 +70,7 @@ export function InventoryProvider({ children }) {
             if (response.ok) {
                 const data = await response.json();
                 setMaterials((prev) => [...prev, data]);
+                fetchMovements();
             } else {
                 console.error("Error creating material", await response.text());
             }
@@ -74,6 +89,7 @@ export function InventoryProvider({ children }) {
             });
             if (response.ok) {
                 setMaterials((prev) => prev.filter((material) => material.id !== id));
+                fetchMovements();
             }
         } catch (error) {
             console.error("Error deleting material:", error);
@@ -98,14 +114,16 @@ export function InventoryProvider({ children }) {
         setMaterials((prev) =>
             prev.map((material) => (material.id === id ? data : material))
         );
-
+        fetchMovements();
         return data;
     };
 
     const registerMovement = async ({ materialId, materialName, movementType, quantity, reason }) => {
-
-        const material = materials.find((m) => m.id === materialId);
-        if (!material) return;
+        const material = materials.find((m) => Number(m.id) === Number(materialId));
+        if (!material) {
+            console.error("Material no encontrado en el estado local:", materialId);
+            throw new Error("Material no encontrado en el inventario");
+        }
 
         let newStock = material.stock;
         if (movementType === "entrada") {
@@ -121,38 +139,34 @@ export function InventoryProvider({ children }) {
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify({ stock: newStock })
+                body: JSON.stringify({ stock: newStock, reason })
             });
 
             if (response.ok) {
+                const data = await response.json();
                 setMaterials((prev) =>
-                    prev.map((m) => m.id === materialId ? { ...m, stock: newStock, lastEntry: "Hoy" } : m)
+                    prev.map((m) => Number(m.id) === Number(materialId) ? data : m)
                 );
-
-                const newMovement = {
-                    id: Date.now(),
-                    materialId,
-                    materialName,
-                    movementType,
-                    quantity,
-                    reason,
-                    date: new Date().toLocaleString(),
-                };
-
-                setMovements((prev) => [newMovement, ...prev]);
+                await fetchMovements();
+                return data;
+            } else {
+                const errorText = await response.text();
+                console.error("Error de servidor al registrar movimiento:", errorText);
+                throw new Error(`Error del servidor (${response.status}): ${errorText}`);
             }
         } catch (error) {
-            console.error("Error updating stock:", error);
+            console.error("Error en registerMovement:", error);
+            throw error;
         }
-    }
+    };
 
     const resetInvetoryData = () => {
         localStorage.removeItem("inventory-materials");
         localStorage.removeItem("inventory-movements");
         setMaterials([]);
         fetchMaterials();
-        setMovements([]);
-    }
+        fetchMovements();
+    };
 
     return (
         <InventoryContext.Provider value={{ materials, movements, addMaterial, deleteMaterial, updateMaterial, registerMovement, resetInvetoryData }}>
