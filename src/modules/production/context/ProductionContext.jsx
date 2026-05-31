@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import { useAuth } from '../../auth/context/AuthContext';
 
 // Creación del contexto de producción
 const ProductionContext = createContext();
@@ -29,13 +30,21 @@ export const ProductionProvider = ({ children }) => {
     const [ordersInProduction, setOrdersInProduction] = useState([]);
     const [loading, setLoading] = useState(false);
     const [useMockData, setUseMockData] = useState(false);
+    const { token, logout } = useAuth();
 
     // RF17: Consultar pedidos en proceso o pendientes de producción (Iteración 3)
     const fetchProductionOrders = async () => {
+        if (!token) return;
         setLoading(true);
         try {
-            // Endpoint sugerido para conectar con tu Backend de Django REST Framework
-            const response = await fetch('http://localhost:8000/api/produccion/');
+            const headers = { 'Authorization': `Bearer ${token}` };
+            const response = await fetch('http://localhost:8000/api/produccion/', { headers });
+            
+            if (response.status === 401) {
+                logout();
+                return;
+            }
+
             if (response.ok) {
                 const data = await response.json();
                 setOrdersInProduction(data);
@@ -66,17 +75,34 @@ export const ProductionProvider = ({ children }) => {
         }
 
         try {
+            const headers = {
+                'Content-Type': 'application/json'
+            };
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
             const response = await fetch(`http://localhost:8000/api/produccion/${orderId}/iniciar_produccion/`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: headers,
                 body: JSON.stringify(materialsUsed)
             });
+
+            if (response.status === 401) {
+                logout();
+                return false;
+            }
 
             if (response.ok) {
                 await fetchProductionOrders();
                 return true;
+            } else {
+                const errorData = await response.json();
+                if (errorData && errorData.error) {
+                    toast.error(errorData.error);
+                } else {
+                    toast.error("Error al procesar la producción.");
+                }
             }
         } catch (error) {
             console.error("Error al iniciar la producción en el backend:", error);
@@ -96,16 +122,31 @@ export const ProductionProvider = ({ children }) => {
         }
 
         try {
+            const headers = {};
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
             const response = await fetch(`http://localhost:8000/api/produccion/${orderId}/finalizar_produccion/`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
+                headers: headers
             });
+
+            if (response.status === 401) {
+                logout();
+                return false;
+            }
 
             if (response.ok) {
                 await fetchProductionOrders();
                 return true;
+            } else {
+                const errorData = await response.json();
+                if (errorData && errorData.error) {
+                    toast.error(errorData.error);
+                } else {
+                    toast.error("Error al finalizar la producción.");
+                }
             }
         } catch (error) {
             console.error("Error al finalizar la orden en el backend:", error);
@@ -116,8 +157,10 @@ export const ProductionProvider = ({ children }) => {
 
     // Carga inicial al montar el módulo de producción en el aplicativo
     useEffect(() => {
-        fetchProductionOrders();
-    }, []);
+        if (token) {
+            fetchProductionOrders();
+        }
+    }, [token]);
 
     return (
         <ProductionContext.Provider value={{

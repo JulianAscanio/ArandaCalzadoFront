@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { inventoryRoutes } from "../../modules/inventory/routers/inventoryRouters";
 import { ordersRoutes } from "../../modules/orders/routers/ordersRouters";
 import { productionRouters } from "../../modules/production/routers/productionRouters";
+import { productsRoutes } from "../../modules/products/routers/productsRouters";
 import Login from "../../modules/auth/pages/Login";
 import ForgotPassword from "../../modules/auth/pages/ForgotPassword";
 import ProtectedRoute from "./ProtectedRoute";
@@ -16,6 +17,7 @@ export default function AppRouter() {
         {inventoryRoutes}
         {ordersRoutes}
         {productionRouters}
+        {productsRoutes}
       </Route>
     </Routes>
   );

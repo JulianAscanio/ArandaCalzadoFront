@@ -26,6 +26,15 @@ export default function Sidebar({ isOpen }) {
           </NavLink>
 
           <NavLink
+            to="/productos"
+            className={({ isActive }) =>
+              isActive ? "sidebar-link active" : "sidebar-link"
+            }
+          >
+            Productos
+          </NavLink>
+
+          <NavLink
             to="/pedidos"
             className={({ isActive }) =>
               isActive ? "sidebar-link active" : "sidebar-link"

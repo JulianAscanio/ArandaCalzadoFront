@@ -176,14 +176,28 @@ export default function NewMaterialPage() {
             <div style={rowStyle}>
               <div>
                 <label style={labelStyle}>Unidad de medida</label>
-                <input
+                <select
                   style={inputStyle}
-                  type="text"
                   name="unit"
-                  placeholder="Ej: dm², pares, litros"
                   value={form.unit}
                   onChange={handleChange}
-                />
+                >
+                  <option value="" disabled>
+                    Seleccione una unidad
+                  </option>
+                  <option value="dm²">dm² (Decímetros cuadrados - Cuero)</option>
+                  <option value="m²">m² (Metros cuadrados - Forros/Sintéticos)</option>
+                  <option value="pares">pares (Pares - Suelas/Plantillas)</option>
+                  <option value="unidades">unidades (Unidades - Hebillas/Accesorios)</option>
+                  <option value="litros">litros (Litros - Adhesivos/Solventes)</option>
+                  <option value="kg">kg (Kilogramos - Insumos pesados)</option>
+                  <option value="g">g (Gramos - Insumos de precisión)</option>
+                  <option value="m">m (Metros - Hilos/Cordones/Cintas)</option>
+                  {form.unit &&
+                    !["dm²", "m²", "pares", "unidades", "litros", "kg", "g", "m"].includes(form.unit) && (
+                      <option value={form.unit}>{form.unit} (Personalizado)</option>
+                    )}
+                </select>
               </div>
 
               <div>
