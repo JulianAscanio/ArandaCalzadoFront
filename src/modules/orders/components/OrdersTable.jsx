@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { MoreVertical, Pencil, Trash2, ArrowUpDown } from "lucide-react";
+import { MdMoreVert as MoreVertical } from "react-icons/md";
+import { MdEdit as Pencil, MdDelete as Trash2, MdSwapVert as ArrowUpDown } from "react-icons/md";
 import { useOrders } from "../context/OrdersContext";
 
 const getStatusLabel = (status) => {

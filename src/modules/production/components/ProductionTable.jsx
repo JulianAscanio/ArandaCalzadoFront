@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, CheckCircle } from 'lucide-react';
+import { MdPlayArrow as Play, MdCheckCircle as CheckCircle } from 'react-icons/md';
 
 export const ProductionTable = ({ orders, onActionClick }) => {
   return (

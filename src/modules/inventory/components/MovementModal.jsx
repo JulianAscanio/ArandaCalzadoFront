@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useInventory } from "../context/InventoryContext";
+import toast from "react-hot-toast";
 
 export default function MovemmentModal({ material, onClose }) {
     const { registerMovement } = useInventory();
@@ -15,12 +16,12 @@ export default function MovemmentModal({ material, onClose }) {
         const numericQuantity = Number(quantity);
 
         if (!quantity || Number(quantity) <= 0) {
-            alert("La cantidad debe ser mayor a 0");
+            toast.error("La cantidad debe ser mayor a 0");
             return;
         }
 
         if (movementType === "salida" && numericQuantity > material.stock) {
-            alert("No hay stock suficiente para registrar la salida");
+            toast.error("No hay stock suficiente para registrar la salida");
             return;
         }
 
@@ -32,10 +33,10 @@ export default function MovemmentModal({ material, onClose }) {
                 quantity: numericQuantity,
                 reason,
             });
-            alert("Movimiento registrado correctamente");
+            toast.success("Movimiento registrado correctamente");
             onClose();
         } catch (error) {
-            alert(error.message);
+            toast.error(error.message);
         }
     };
 

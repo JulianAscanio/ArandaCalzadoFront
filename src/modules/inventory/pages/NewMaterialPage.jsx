@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AppLayout from "../../../shared/layout/AppLayout";
 import { useInventory } from "../context/InventoryContext";
+import toast from "react-hot-toast";
 
 function toDateInputValue(value) {
   const fallback = new Date().toISOString().split("T")[0];
@@ -119,7 +120,7 @@ export default function NewMaterialPage() {
       form.maxStock === "" ||
       form.lastEntry === ""
     ) {
-      alert("Completa todos los campos obligatorios");
+      toast.error("Completa todos los campos obligatorios");
       return;
     }
 
@@ -136,16 +137,16 @@ export default function NewMaterialPage() {
     try {
       if (isEditMode) {
         await updateMaterial(id, payload);
-        alert("Material actualizado correctamente");
+        toast.success("Material actualizado correctamente");
       } else {
         await addMaterial(payload);
-        alert("Material registrado correctamente");
+        toast.success("Material registrado correctamente");
       }
 
       navigate("/inventario");
     } catch (error) {
       console.error(error);
-      alert("Ocurrió un error al guardar el material");
+      toast.error("Ocurrió un error al guardar el material");
     }
   };
 

@@ -6,7 +6,7 @@ import { ProductionFilters } from '../components/ProductionFilters';
 import { ProductionModal } from '../components/ProductionModal';
 import AppLayout from "../../../shared/layout/AppLayout";
 import { useNavigate } from 'react-router-dom';
-import { Plus } from 'lucide-react';
+import { MdAdd as Plus } from 'react-icons/md';
 import toast from 'react-hot-toast';
 
 export const ProductionPage = () => {

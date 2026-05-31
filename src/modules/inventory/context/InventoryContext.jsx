@@ -10,13 +10,6 @@ export function InventoryProvider({ children }) {
 
     const { token, logout } = useAuth();
 
-    useEffect(() => {
-        if (token) {
-            fetchMaterials();
-            fetchMovements();
-        }
-    }, [token]);
-
     const fetchMaterials = async () => {
         try {
             const response = await fetch("http://localhost:8000/api/inventario/materiales/", {
@@ -59,6 +52,13 @@ export function InventoryProvider({ children }) {
         }
     };
 
+    useEffect(() => {
+        if (token) {
+            fetchMaterials();
+            fetchMovements();
+        }
+    }, [token]);
+
     const addMaterial = async (newMaterial) => {
         try {
             const response = await fetch("http://localhost:8000/api/inventario/materiales/", {
@@ -74,7 +74,7 @@ export function InventoryProvider({ children }) {
                 const data = await response.json();
                 setMaterials((prev) => [...prev, data]);
                 fetchMovements();
-                toast.success("Material registrado exitosamente");
+                console.log("Material registrado exitosamente");
             } else {
                 console.error("Error creating material", await response.text());
                 toast.error("Error al registrar el nuevo material");
@@ -124,7 +124,7 @@ export function InventoryProvider({ children }) {
             prev.map((material) => (material.id === id ? data : material))
         );
         fetchMovements();
-        toast.success("Material actualizado correctamente");
+        console.log("Material actualizado correctamente");
         return data;
     };
 
@@ -159,7 +159,7 @@ export function InventoryProvider({ children }) {
                     prev.map((m) => Number(m.id) === Number(materialId) ? data : m)
                 );
                 await fetchMovements();
-                toast.success(`Movimiento de ${movementType} registrado exitosamente`);
+                console.log(`Movimiento de ${movementType} registrado exitosamente`);
                 return data;
             } else {
                 const errorText = await response.text();

@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AppLayout from "../../../shared/layout/AppLayout";
 import { useOrders } from "../context/OrdersContext";
+import toast from "react-hot-toast";
 
 export default function NewOrderPage() {
   const navigate = useNavigate();
@@ -71,7 +72,7 @@ export default function NewOrderPage() {
       !form.total ||
       !form.status
     ) {
-      alert("Completa todos los campos obligatorios");
+      toast.error("Completa todos los campos obligatorios");
       return;
     }
 
@@ -94,16 +95,16 @@ export default function NewOrderPage() {
     try {
       if (isEditMode) {
         await updateOrder(id, payload);
-        alert("Pedido actualizado correctamente");
+        toast.success("Pedido actualizado correctamente");
       } else {
         await addOrder(payload);
-        alert("Pedido registrado correctamente");
+        toast.success("Pedido registrado correctamente");
       }
 
       navigate("/pedidos");
     } catch (error) {
       console.error(error);
-      alert("Ocurrió un error al guardar el pedido");
+      toast.error("Ocurrió un error al guardar el pedido");
     }
   };
 

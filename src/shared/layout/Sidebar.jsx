@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../modules/auth/context/AuthContext";
+import { MdInventory, MdOutlineShoppingCart, MdOutlinePrecisionManufacturing, MdLogout } from "react-icons/md";
 
 export default function Sidebar({ isOpen }) {
   const { logout } = useAuth();
@@ -22,7 +23,8 @@ export default function Sidebar({ isOpen }) {
               isActive ? "sidebar-link active" : "sidebar-link"
             }
           >
-            Inventario
+            <MdInventory size={20} />
+            <span>Inventario</span>
           </NavLink>
 
           <NavLink
@@ -31,7 +33,8 @@ export default function Sidebar({ isOpen }) {
               isActive ? "sidebar-link active" : "sidebar-link"
             }
           >
-            Pedidos
+            <MdOutlineShoppingCart size={20} />
+            <span>Pedidos</span>
           </NavLink>
           <NavLink
             to="/produccion"
@@ -39,7 +42,8 @@ export default function Sidebar({ isOpen }) {
               isActive ? "sidebar-link active" : "sidebar-link"
             }
           >
-            Producción
+            <MdOutlinePrecisionManufacturing size={20} />
+            <span>Producción</span>
           </NavLink>
         </nav>
       </div>
@@ -54,9 +58,11 @@ export default function Sidebar({ isOpen }) {
         </div>
         <button 
           onClick={logout} 
-          style={{background: 'none', border: 'none', color: '#d2bcc3', cursor: 'pointer', fontSize: '13px', textDecoration: 'underline', padding: 0}}
+          style={{background: 'none', border: 'none', color: '#d2bcc3', cursor: 'pointer', fontSize: '13px', padding: 0, display: 'flex', alignItems: 'center', gap: '4px'}}
+          title="Cerrar sesión"
         >
-          Salir
+          <MdLogout size={18} />
+          <span>Salir</span>
         </button>
       </div>
     </aside>

@@ -58,7 +58,6 @@ export const ProductionProvider = ({ children }) => {
     // RF13 y RF14: Generar orden de producción y asociar materias primas
     const startProductionOrder = async (orderId, materialsUsed) => {
         if (useMockData) {
-            // Simular respuesta del backend
             setOrdersInProduction(prev => 
                 prev.map(o => o.id === orderId ? { ...o, status: 'En producción' } : o)
             );

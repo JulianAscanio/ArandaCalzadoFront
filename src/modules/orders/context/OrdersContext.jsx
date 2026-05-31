@@ -14,12 +14,6 @@ export function OrdersProvider({ children }) {
 
     const { token, logout } = useAuth();
 
-    useEffect(() => {
-        if (token) {
-            fetchOrders();
-        }
-    }, [token]);
-
     const fetchOrders = async () => {
         try {
             const headers = { "Authorization": `Bearer ${token}` };
@@ -50,6 +44,12 @@ export function OrdersProvider({ children }) {
             console.error("Error fetching orders data:", error);
         }
     };
+
+    useEffect(() => {
+        if (token) {
+            fetchOrders();
+        }
+    }, [token]);
 
     useEffect(() => {
         localStorage.setItem("orders-stages", JSON.stringify(stages));

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProduction } from '../context/ProductionContext';
 import AppLayout from "../../../shared/layout/AppLayout";
-import { ArrowLeft } from 'lucide-react';
+import { MdArrowBack as ArrowLeft } from 'react-icons/md';
 import toast from 'react-hot-toast';
 
 export const NewProductionPage = () => {

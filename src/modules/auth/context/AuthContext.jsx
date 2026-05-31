@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
@@ -127,7 +128,7 @@ export function AuthProvider({ children }) {
             setToken(data.access);
             navigate("/inventario");
         } catch (error) {
-            console.error("Error en login:", error);
+            toast.error("Error en login:", error);
             throw error;
         } finally {
             setLoading(false);
