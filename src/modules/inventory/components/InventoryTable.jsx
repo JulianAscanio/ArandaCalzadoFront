@@ -10,7 +10,7 @@ export default function InventoryTable({ items, onOpenModal }) {
   const [openMenuId, setOpenMenuId] = useState(null);
 
   const handleDelete = (id) => {
-    if (window.confirm("¿Seguro que deseas borrar este material?")) {
+    if (window.confirm("¿Estás seguro que vas a eliminar permanentemente esto?")) {
       deleteMaterial(id);
       setOpenMenuId(null);
     }

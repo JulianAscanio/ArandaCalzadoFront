@@ -5,6 +5,7 @@ import App from "./App";
 import { InventoryProvider } from "./modules/inventory/context/InventoryContext";
 import { OrdersProvider } from "./modules/orders/context/OrdersContext";
 import { ProductionProvider } from "./modules/production/context/ProductionContext";
+import { ProductsProvider } from "./modules/products/context/ProductsContext";
 import { AuthProvider } from "./modules/auth/context/AuthContext";
 import "./styles.css";
 
@@ -13,11 +14,13 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <AuthProvider>
         <InventoryProvider>
-          <OrdersProvider>
-            <ProductionProvider>
-              <App />
-            </ProductionProvider>
-          </OrdersProvider>
+          <ProductsProvider>
+            <OrdersProvider>
+              <ProductionProvider>
+                <App />
+              </ProductionProvider>
+            </OrdersProvider>
+          </ProductsProvider>
         </InventoryProvider>
       </AuthProvider>
     </BrowserRouter>

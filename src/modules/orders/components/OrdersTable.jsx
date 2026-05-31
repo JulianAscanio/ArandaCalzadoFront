@@ -19,7 +19,7 @@ export default function OrdersTable({ items, onOpenModal }) {
   const [openMenuId, setOpenMenuId] = useState(null);
 
   const handleDelete = (id) => {
-    if (window.confirm("¿Seguro que deseas borrar este pedido?")) {
+    if (window.confirm("¿Estás seguro que vas a eliminar permanentemente esto?")) {
       deleteOrder(id);
       setOpenMenuId(null);
     }
@@ -65,8 +65,6 @@ export default function OrdersTable({ items, onOpenModal }) {
         {items.map((item) => {
           const customer = item.customer_detail;
           const user = customer?.user || {};
-          const firstItem = item.items?.[0];
-          const product = firstItem?.product_detail;
 
           return (
             <tr key={item.id}>
@@ -82,12 +80,16 @@ export default function OrdersTable({ items, onOpenModal }) {
               </td>
               <td style={tdStyle}>
                 <div style={{ fontSize: "13px" }}>
-                  {product ? (
-                    <>
-                      <div><strong>Producto:</strong> {product.name} (x{firstItem.quantity})</div>
-                      <div><strong>Talla:</strong> {product.size} | <strong>P.U:</strong> {formatCurrency(firstItem.unit_price)}</div>
-                    </>
-                  ) : "Sin productos"}
+                  {item.items && item.items.length > 0 ? (
+                    item.items.map((orderItem, idx) => (
+                      <div key={orderItem.id || idx} style={{ marginBottom: idx < item.items.length - 1 ? '6px' : '0', paddingBottom: idx < item.items.length - 1 ? '6px' : '0', borderBottom: idx < item.items.length - 1 ? '1px dashed #f2ebe6' : 'none' }}>
+                        <strong>{orderItem.product_detail?.name || 'Desconocido'}</strong> (x{orderItem.quantity})
+                        <div>Talla: {orderItem.size} | P.U: {formatCurrency(orderItem.unit_price)}</div>
+                      </div>
+                    ))
+                  ) : (
+                    "Sin productos"
+                  )}
                 </div>
               </td>
               <td style={tdStyle}>{formatDate(item.created_at)}</td>

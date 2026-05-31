@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProduction } from '../context/ProductionContext';
+import { useAuth } from '../../auth/context/AuthContext';
 import AppLayout from "../../../shared/layout/AppLayout";
 import { MdArrowBack as ArrowLeft } from 'react-icons/md';
 import toast from 'react-hot-toast';
@@ -8,6 +9,7 @@ import toast from 'react-hot-toast';
 export const NewProductionPage = () => {
   const navigate = useNavigate();
   const { startProductionOrder } = useProduction();
+  const { token } = useAuth();
   
   // Estados del Formulario
   const [pedidoId, setPedidoId] = useState('');
@@ -17,17 +19,22 @@ export const NewProductionPage = () => {
 
   // Simulación u obtención de pedidos que vienen de Ventas listos para fabricar
   useEffect(() => {
-    // En producción real, puedes hacer un fetch a tus pedidos con status 'Pendiente'
     const cargarPedidosDisponibles = async () => {
-      // Ejemplo de estructura según tu modelo lógico 'pedido_order'
-      const datosSimulados = [
-        { id: '102', descripcion: 'Pedido #102 - 12 pares de Botines Elegantes' },
-        { id: '105', descripcion: 'Pedido #105 - 5 pares de Tacón Alto Vino' },
-      ];
-      setPedidosPendientes(datosSimulados);
+      try {
+        const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+        const response = await fetch('http://localhost:8000/api/produccion/pedidos_pendientes/', { headers });
+        if (response.ok) {
+          const data = await response.json();
+          setPedidosPendientes(data);
+        } else {
+          console.error("Error fetching pending orders");
+        }
+      } catch (error) {
+        console.error("Error loading pending orders:", error);
+      }
     };
     cargarPedidosDisponibles();
-  }, []);
+  }, [token]);
 
   const handleCrearOrden = async (e) => {
     e.preventDefault();

@@ -45,7 +45,7 @@ export const ProductionTable = ({ orders, onActionClick }) => {
                       <ul style={{ margin: 0, paddingLeft: '16px', fontSize: '13px', color: '#333' }}>
                       {order.items.map((item, index) => (
                         <li key={index}>
-                          {item.quantity} par(es) - {item.product_name || `Producto #${item.product_id}`}
+                           {item.quantity} par(es) - {item.product_name || `Producto #${item.product_id}`} (Talla: {item.size || 'N/A'})
                         </li>
                       ))}
                     </ul>

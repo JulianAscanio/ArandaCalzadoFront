@@ -93,8 +93,10 @@ html {
 }
 
 .sidebar {
- width: 290px;
-  min-height: 100vh;
+  width: 290px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
   background: linear-gradient(180deg, #22000d 0%, #160008 100%);
   color: #fff;
   display: flex;
