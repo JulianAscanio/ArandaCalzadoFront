@@ -11,9 +11,8 @@ export const ProductionFilters = ({ activeFilter, onFilterChange }) => {
           onClick={() => onFilterChange(state)}
           style={{
             ...styles.filterBtn,
-            backgroundColor: activeFilter === state ? '#b1223a' : '#FFFFFF',
-            color: activeFilter === state ? '#FFFFFF' : '#6f5d56',
-            border: activeFilter === state ? '1px solid #b1223a' : '1px solid #d8ccc4',
+            backgroundColor: activeFilter === state ? '#b1223a' : 'transparent',
+            color: activeFilter === state ? '#FFFFFF' : '#4b3a35',
           }}
         >
           {state}
@@ -25,17 +24,21 @@ export const ProductionFilters = ({ activeFilter, onFilterChange }) => {
 
 const styles = {
   filterContainer: {
-    display: 'flex',
-    gap: '8px',
+    display: 'inline-flex',
+    backgroundColor: '#FFFFFF',
+    padding: '6px',
+    borderRadius: '30px',
+    gap: '4px',
     marginBottom: '20px',
-    flexWrap: 'wrap',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
   },
   filterBtn: {
-    padding: '6px 16px',
-    borderRadius: '20px',
+    padding: '8px 20px',
+    borderRadius: '24px',
     fontSize: '14px',
-    fontWeight: '500',
+    fontWeight: '600',
     cursor: 'pointer',
+    border: 'none',
     transition: 'all 0.2s ease',
   }
 };

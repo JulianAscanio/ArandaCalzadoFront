@@ -2,7 +2,24 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useProducts } from "../context/ProductsContext";
 import AppLayout from "../../../shared/layout/AppLayout";
-import { MoreVertical, Pencil, Trash2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, Info } from "lucide-react";
+
+const HeelIcon = ({ color, size }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M18.4 12.3c.7-.6 1.6-1.3 2.1-2.3.2-.4.4-.9.5-1.4 0-.1 0-.1 0-.2-.1-.8-.8-1.4-1.6-1.4h-3.1c-.8 0-1.5.5-1.7 1.3L12.5 14H6c-1.1 0-2 .9-2 2v2h14v-2c0-.6.2-1.2.6-1.7l1.8-2z"/>
+    <path d="M20 18v4h-2v-4"/>
+  </svg>
+);
+
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  if (imagePath.startsWith('http') || imagePath.startsWith('data:')) {
+    return imagePath;
+  }
+  // Remove leading slash if present to avoid double slashes
+  const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+  return `http://localhost:8000/${cleanPath}`;
+};
 
 export default function ProductsPage() {
   const [search, setSearch] = useState("");
@@ -83,7 +100,7 @@ export default function ProductsPage() {
         />
       </div>
 
-      <div style={{ background: "white", borderRadius: "14px", overflow: "visible", boxShadow: "0 4px 6px rgba(0, 0, 0, 0.05)" }}>
+      <div style={{ background: "white", borderRadius: "16px", overflow: "visible", boxShadow: "0 4px 12px rgba(0, 0, 0, 0.03)" }}>
         <table
           style={{
             width: "100%",
@@ -91,44 +108,78 @@ export default function ProductsPage() {
           }}
         >
           <thead>
-            <tr style={{ background: "#f7f2ee" }}>
+            <tr style={{ background: "white" }}>
+              <th style={thStyle}>Calzado</th>
               <th style={thStyle}>Referencia</th>
-              <th style={thStyle}>Nombre del Calzado</th>
-              <th style={thStyle}>Altura Tacón</th>
               <th style={thStyle}>Material Base</th>
               <th style={thStyle}>Precio Venta</th>
-              <th style={thStyle}>Stock Disponible</th>
-              <th style={thStyle}>Descripción</th>
+              <th style={thStyle}>Stock</th>
               <th style={thStyle}>Acciones</th>
             </tr>
           </thead>
           <tbody>
             {filteredProducts.length === 0 ? (
               <tr>
-                <td colSpan="8" style={{ ...tdStyle, textAlign: "center", padding: "30px", color: "#6f5d56" }}>
+                <td colSpan="6" style={{ ...tdStyle, textAlign: "center", padding: "30px", color: "#6f5d56" }}>
                   No se encontraron productos en el catálogo.
                 </td>
               </tr>
             ) : (
               filteredProducts.map((product) => (
                 <tr key={product.id}>
-                  <td style={{ ...tdStyle, fontWeight: "600", color: "#b1223a" }}>
-                    {product.reference || "N/A"}
-                  </td>
-                  <td style={tdStyle}>{product.name}</td>
-                  <td style={tdStyle}>{product.heel_height || "N/A"}</td>
                   <td style={tdStyle}>
-                    {product.material_detail?.name || (product.material ? `Material #${product.material}` : "No asignado")}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                      <div style={iconBoxStyle}>
+                        {product.image ? (
+                          <img 
+                            src={getImageUrl(product.image)} 
+                            alt={product.name} 
+                            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "10px" }} 
+                          />
+                        ) : (
+                          <HeelIcon size={24} color="#4b3a35" />
+                        )}
+                      </div>
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <span style={{ fontWeight: '600', color: '#2c2620', fontSize: '15px' }}>
+                          {product.name}
+                        </span>
+                        <span style={{ fontSize: "13px", color: "#8b7b78", marginTop: "4px" }}>Tacón: {product.heel_height || "N/A"}</span>
+                      </div>
+                    </div>
                   </td>
+
                   <td style={tdStyle}>
-                    <strong>{formatCurrency(product.price)}</strong>
+                    <span style={{ fontWeight: "600", color: "#b1223a", fontSize: "14px" }}>
+                      {product.reference || "N/A"}
+                    </span>
                   </td>
+                  
                   <td style={tdStyle}>
-                    {product.available_stock} pares
+                    <span style={{
+                      padding: "6px 12px",
+                      borderRadius: "20px",
+                      background: "#f7f2ee",
+                      color: "#4b3a35",
+                      fontSize: "12px",
+                      fontWeight: "500",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px"
+                    }}>
+                      <Info size={12} />
+                      {product.material_detail?.name || (product.material ? `Mat #${product.material}` : "N/A")}
+                    </span>
                   </td>
-                  <td style={{ ...tdStyle, maxWidth: "250px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-                    {product.description || "Sin descripción"}
+                  
+                  <td style={tdStyle}>
+                    <strong style={{ color: "#2c2620", fontSize: "15px" }}>{formatCurrency(product.price)}</strong>
                   </td>
+                  
+                  <td style={tdStyle}>
+                    <span style={{ fontWeight: "500", color: "#4b3a35" }}>{product.available_stock}</span> <span style={{ fontSize: "13px", color: "#8b7b78" }}>pares</span>
+                  </td>
+                  
                   <td style={tdStyle}>
                     <div style={{ position: "relative", display: "inline-block" }}>
                       <button
@@ -183,17 +234,28 @@ export default function ProductsPage() {
 
 const thStyle = {
   textAlign: "left",
-  padding: "14px",
-  borderBottom: "1px solid #e8ded8",
+  padding: "16px 20px",
+  borderBottom: "1px solid #f0e8e4",
   color: "#4b3a35",
   fontWeight: "600",
+  fontSize: "14px"
 };
 
 const tdStyle = {
-  padding: "14px",
+  padding: "16px 20px",
   borderBottom: "1px solid #f7f2ee",
-  color: "#333",
-  fontSize: "14px",
+  verticalAlign: "middle",
+};
+
+const iconBoxStyle = {
+  width: "56px",
+  height: "56px",
+  borderRadius: "10px",
+  background: "#f7f2ee",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  flexShrink: 0
 };
 
 const dropdownStyle = {

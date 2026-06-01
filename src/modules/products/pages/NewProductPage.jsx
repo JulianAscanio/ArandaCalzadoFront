@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AppLayout from "../../../shared/layout/AppLayout";
 import { useProducts } from "../context/ProductsContext";
 import { useInventory } from "../../inventory/context/InventoryContext";
+import { Upload, X } from "lucide-react";
 
 export default function NewProductPage() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const fileInputRef = useRef(null);
 
   const { products, addProduct, updateProduct } = useProducts();
   const { materials } = useInventory();
@@ -21,6 +23,7 @@ export default function NewProductPage() {
     material: "",
     available_stock: "0",
     description: "",
+    image: null,
   });
 
   useEffect(() => {
@@ -38,6 +41,7 @@ export default function NewProductPage() {
           material: productToEdit.material || (productToEdit.material_detail?.id) || "",
           available_stock: String(productToEdit.available_stock ?? "0"),
           description: productToEdit.description || "",
+          image: productToEdit.image || null,
         });
       }
     }
@@ -49,6 +53,24 @@ export default function NewProductPage() {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setForm((prev) => ({ ...prev, image: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setForm((prev) => ({ ...prev, image: null }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -73,6 +95,7 @@ export default function NewProductPage() {
       material: form.material ? Number(form.material) : null,
       available_stock: Number(form.available_stock),
       description: form.description,
+      image: form.image,
     };
 
     try {
@@ -101,6 +124,69 @@ export default function NewProductPage() {
           </p>
 
           <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: "24px" }}>
+              <label style={labelStyle}>Fotografía del Calzado (Opcional)</label>
+              
+              {!form.image ? (
+                <div 
+                  style={{
+                    border: "2px dashed #d8ccc4",
+                    borderRadius: "14px",
+                    padding: "30px",
+                    textAlign: "center",
+                    background: "#fdfbfa",
+                    cursor: "pointer",
+                    position: "relative",
+                    transition: "all 0.2s ease"
+                  }}
+                  onClick={() => fileInputRef.current?.click()}
+                  onMouseOver={(e) => e.currentTarget.style.borderColor = "#b1223a"}
+                  onMouseOut={(e) => e.currentTarget.style.borderColor = "#d8ccc4"}
+                >
+                  <Upload size={32} color="#8b7b78" style={{ marginBottom: "10px" }} />
+                  <p style={{ margin: 0, color: "#4b3a35", fontWeight: "500" }}>Haz clic para subir una foto</p>
+                  <p style={{ margin: "4px 0 0", color: "#8b7b78", fontSize: "13px" }}>JPG, PNG o WEBP (Máx. 2MB recomendado)</p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    onChange={handleImageChange}
+                    style={{ display: "none" }}
+                  />
+                </div>
+              ) : (
+                <div style={{ position: "relative", display: "inline-block" }}>
+                  <img 
+                    src={getImageUrl(form.image)} 
+                    alt="Preview" 
+                    style={{ width: "160px", height: "160px", objectFit: "cover", borderRadius: "14px", border: "1px solid #e8ded8" }} 
+                  />
+                  <button
+                    type="button"
+                    onClick={removeImage}
+                    style={{
+                      position: "absolute",
+                      top: "-8px",
+                      right: "-8px",
+                      background: "#b1223a",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "50%",
+                      width: "28px",
+                      height: "28px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      cursor: "pointer",
+                      boxShadow: "0 2px 6px rgba(0,0,0,0.15)"
+                    }}
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+              )}
+            </div>
+
             <div style={rowStyle}>
               <div>
                 <label style={labelStyle}>Referencia del Calzado *</label>

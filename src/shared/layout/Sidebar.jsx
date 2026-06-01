@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../modules/auth/context/AuthContext";
-import { MdInventory, MdOutlineShoppingCart, MdOutlinePrecisionManufacturing, MdLogout } from "react-icons/md";
+import { Package, ShoppingCart, Factory, LogOut, Grid } from "lucide-react";
 
 export default function Sidebar({ isOpen }) {
   const { logout } = useAuth();
@@ -22,8 +22,9 @@ export default function Sidebar({ isOpen }) {
             className={({ isActive }) =>
               isActive ? "sidebar-link active" : "sidebar-link"
             }
+            style={{ gap: "14px" }}
           >
-            <MdInventory size={20} />
+            <Package size={20} strokeWidth={2.5} />
             <span>Inventario</span>
           </NavLink>
 
@@ -32,8 +33,10 @@ export default function Sidebar({ isOpen }) {
             className={({ isActive }) =>
               isActive ? "sidebar-link active" : "sidebar-link"
             }
+            style={{ gap: "14px" }}
           >
-            Productos
+            <Grid size={20} strokeWidth={2.5} />
+            <span>Productos</span>
           </NavLink>
 
           <NavLink
@@ -41,8 +44,9 @@ export default function Sidebar({ isOpen }) {
             className={({ isActive }) =>
               isActive ? "sidebar-link active" : "sidebar-link"
             }
+            style={{ gap: "14px" }}
           >
-            <MdOutlineShoppingCart size={20} />
+            <ShoppingCart size={20} strokeWidth={2.5} />
             <span>Pedidos</span>
           </NavLink>
           <NavLink
@@ -50,8 +54,9 @@ export default function Sidebar({ isOpen }) {
             className={({ isActive }) =>
               isActive ? "sidebar-link active" : "sidebar-link"
             }
+            style={{ gap: "14px" }}
           >
-            <MdOutlinePrecisionManufacturing size={20} />
+            <Factory size={20} strokeWidth={2.5} />
             <span>Producción</span>
           </NavLink>
         </nav>
@@ -67,10 +72,12 @@ export default function Sidebar({ isOpen }) {
         </div>
         <button 
           onClick={logout} 
-          style={{background: 'none', border: 'none', color: '#d2bcc3', cursor: 'pointer', fontSize: '13px', padding: 0, display: 'flex', alignItems: 'center', gap: '4px'}}
+          style={{background: 'none', border: 'none', color: '#d2bcc3', cursor: 'pointer', fontSize: '13px', padding: 0, display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '500', transition: 'color 0.2s'}}
+          onMouseOver={(e) => e.currentTarget.style.color = '#fff'}
+          onMouseOut={(e) => e.currentTarget.style.color = '#d2bcc3'}
           title="Cerrar sesión"
         >
-          <MdLogout size={18} />
+          <LogOut size={16} strokeWidth={2.5} />
           <span>Salir</span>
         </button>
       </div>

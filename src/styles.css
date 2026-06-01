@@ -109,9 +109,37 @@ html {
 }
 
 .sidebar.collapsed {
-  width: 0;
+  width: 86px;
+  padding: 28px 12px 22px;
+  opacity: 1;
+}
+
+.sidebar.collapsed .brand-text,
+.sidebar.collapsed .sidebar-link span,
+.sidebar.collapsed .sidebar-user > div > div:nth-child(2),
+.sidebar.collapsed .sidebar-user button span {
+  display: none;
+}
+
+.sidebar.collapsed .brand-block {
+  padding: 8px 0 12px;
+  justify-content: center;
+}
+
+.sidebar.collapsed .sidebar-link {
+  justify-content: center;
   padding: 0;
-  opacity: 0;
+}
+
+.sidebar.collapsed .sidebar-user {
+  flex-direction: column;
+  justify-content: center !important;
+  gap: 20px;
+  padding: 14px 0;
+}
+
+.sidebar.collapsed .sidebar-user > div {
+  margin: 0;
 }
 
 .sidebar-top {

@@ -37,13 +37,19 @@ export function ProductsProvider({ children }) {
 
     const addProduct = async (newProduct) => {
         try {
+            const isFormData = newProduct instanceof FormData;
+            const headers = {
+                "Authorization": `Bearer ${token}`
+            };
+            
+            if (!isFormData) {
+                headers["Content-Type"] = "application/json";
+            }
+
             const response = await fetch("http://localhost:8000/api/inventario/productos/", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(newProduct)
+                headers,
+                body: isFormData ? newProduct : JSON.stringify(newProduct)
             });
 
             if (response.ok) {
@@ -83,14 +89,21 @@ export function ProductsProvider({ children }) {
 
     const updateProduct = async (id, updatedProduct) => {
         try {
+            const isFormData = updatedProduct instanceof FormData;
+            const headers = {
+                "Authorization": `Bearer ${token}`
+            };
+
+            if (!isFormData) {
+                headers["Content-Type"] = "application/json";
+            }
+
             const response = await fetch(`http://localhost:8000/api/inventario/productos/${id}/`, {
                 method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
-                },
-                body: JSON.stringify(updatedProduct)
+                headers,
+                body: isFormData ? updatedProduct : JSON.stringify(updatedProduct)
             });
+            
             if (!response.ok) {
                 const errorData = await response.text();
                 toast.error("Error al intentar actualizar el producto");
