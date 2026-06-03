@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { MdArrowBack as ArrowLeft } from "react-icons/md";
 import SearchBar from "../components/SearchBar";
 import StatusFilters from "../components/StatusFilters";
 import OrdersTable from "../components/OrdersTable";
@@ -11,6 +12,7 @@ export default function OrdersPage() {
   const [search, setSearch] = useState("");
   const [activeStatus, setActiveStatus] = useState("Todos");
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const navigate = useNavigate();
 
   const { orders } = useOrders();
 
@@ -26,7 +28,7 @@ export default function OrdersPage() {
 
   const filteredOrders = useMemo(() => {
     return orders.filter((item) => {
-      const customerName = (item.customer_detail?.user?.first_name || item.customer_detail?.user?.username || "").toLowerCase();
+      const customerName = (item.customer_detail?.full_name || item.customer_detail?.name || item.customer_detail?.user?.first_name || item.customer_detail?.user?.username || "").toLowerCase();
       const productName = (item.items?.[0]?.product_detail?.name || "").toLowerCase();
 
       const matchesSearch =
@@ -51,11 +53,29 @@ export default function OrdersPage() {
           marginBottom: "14px",
         }}
       >
-        <div>
-          <h1 style={{ marginBottom: "10px" }}>Gestión de Pedidos</h1>
-          <p style={{ color: "#6f5d56" }}>
-            Control de pedidos de clientes y estados de producción
-          </p>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <button
+            onClick={() => navigate('/')}
+            title="Volver al inicio"
+            style={{
+              background: "#e8ded8",
+              border: "none",
+              borderRadius: "10px",
+              padding: "10px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              color: "#4b3a35"
+            }}
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h1 style={{ marginBottom: "10px", marginTop: 0 }}>Gestión de Pedidos</h1>
+            <p style={{ color: "#6f5d56", margin: 0 }}>
+              Control de pedidos de clientes y estados de producción
+            </p>
+          </div>
         </div>
 
         <Link

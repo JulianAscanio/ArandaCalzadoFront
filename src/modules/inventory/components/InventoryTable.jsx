@@ -19,7 +19,7 @@ export default function InventoryTable({ items, onOpenModal }) {
     <div style={{
       background: "white",
       borderRadius: "16px",
-      overflow: "hidden",
+      overflow: "visible",
       boxShadow: "0 4px 12px rgba(0, 0, 0, 0.03)",
     }}>
       <table
@@ -41,7 +41,7 @@ export default function InventoryTable({ items, onOpenModal }) {
         </thead>
 
         <tbody>
-          {items.map((item) => (
+          {items.map((item, index) => (
             <tr key={item.id}>
               <td style={tdStyle}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -114,7 +114,12 @@ export default function InventoryTable({ items, onOpenModal }) {
                     </button>
 
                     {openMenuId === item.id && (
-                      <div style={dropdownStyle}>
+                      <div style={{
+                        ...dropdownStyle,
+                        ...(index >= items.length - 2 && items.length > 3 
+                          ? { top: "auto", bottom: "100%", marginBottom: "8px" } 
+                          : {})
+                      }}>
                         <Link
                           to={`/inventario/editar-material/${item.id}`}
                           style={dropdownItemStyle}
@@ -193,7 +198,7 @@ const dropdownStyle = {
   boxShadow: "0 10px 24px rgba(0,0,0,0.12)",
   border: "1px solid #eee",
   overflow: "hidden",
-  zIndex: 20,
+  zIndex: 100,
 };
 
 const dropdownItemStyle = {

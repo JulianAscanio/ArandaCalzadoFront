@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import AppLayout from "../../../shared/layout/AppLayout";
 import { useOrders } from "../context/OrdersContext";
 import toast from "react-hot-toast";
+import { MdArrowBack as ArrowLeft } from "react-icons/md";
 
 export default function NewOrderPage() {
   const navigate = useNavigate();
@@ -160,14 +161,25 @@ export default function NewOrderPage() {
     <AppLayout title={isEditMode ? "Editar pedido" : "Nuevo pedido"}>
       <div style={pageStyle}>
         <div style={cardStyle}>
-          <h1 style={{ marginTop: 0, marginBottom: "8px" }}>
-            {isEditMode ? "Editar pedido" : "Registrar nuevo pedido"}
-          </h1>
-          <p style={{ color: "#6f5d56", marginBottom: "24px" }}>
-            {isEditMode
-              ? "Actualiza la información del pedido"
-              : "Agrega un nuevo pedido"}
-          </p>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
+            <div>
+              <h1 style={{ marginTop: 0, marginBottom: "8px" }}>
+                {isEditMode ? "Editar pedido" : "Registrar nuevo pedido"}
+              </h1>
+              <p style={{ color: "#6f5d56", margin: 0 }}>
+                {isEditMode
+                  ? "Actualiza la información del pedido"
+                  : "Agrega un nuevo pedido"}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate("/pedidos")}
+              style={{ ...cancelButtonStyle, display: "flex", alignItems: "center", gap: "6px", padding: "8px 12px" }}
+            >
+              <ArrowLeft size={16} /> Volver
+            </button>
+          </div>
 
           <form onSubmit={handleSubmit}>
             <div style={rowStyle}>
@@ -181,11 +193,15 @@ export default function NewOrderPage() {
                   required
                 >
                   <option value="">Selecciona un cliente</option>
-                  {customers?.map(customer => (
-                    <option key={customer.id} value={customer.id}>
-                      {customer.user?.first_name} {customer.user?.last_name} ({customer.user?.username})
-                    </option>
-                  ))}
+                  {customers?.map(customer => {
+                    const displayName = customer.name || customer.full_name || `${customer.user?.first_name || ''} ${customer.user?.last_name || ''}`.trim() || "Cliente Desconocido";
+                    const displayInfo = customer.email || customer.user?.username || "";
+                    return (
+                      <option key={customer.id} value={customer.id}>
+                        {displayName} {displayInfo ? `(${displayInfo})` : ""}
+                      </option>
+                    );
+                  })}
                 </select>
               </div>
 

@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 
 export const NewProductionPage = () => {
   const navigate = useNavigate();
-  const { startProductionOrder } = useProduction();
+  const { createProductionOrder } = useProduction();
   const { token } = useAuth();
   
   // Estados del Formulario
@@ -47,13 +47,15 @@ export const NewProductionPage = () => {
     
     // Construimos la carga útil básica para inicializar la OP en Django
     const payload = {
-      pedido_id: pedidoId,
+      id: Number(pedidoId),
+      pedido: Number(pedidoId),
+      pedido_id: Number(pedidoId),
       operario: operarioAsignado,
       fecha_inicio: new Date().toISOString().split('T')[0]
     };
 
     // Usamos la función del contexto para impactar el backend
-    const success = await startProductionOrder(pedidoId, payload);
+    const success = await createProductionOrder(payload);
     setIsSubmitting(false);
 
     if (success) {
@@ -67,29 +69,23 @@ export const NewProductionPage = () => {
   return (
     <AppLayout title="Generar Orden">
       <div style={pageStyle}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "20px",
-          }}
-        >
-          <div>
-            <h1 style={{ marginBottom: "8px", marginTop: 0 }}>Generar Orden de Producción</h1>
-            <p style={{ color: "#6f5d56" }}>
-              Vincula un pedido de venta aprobado para iniciar su manufactura en la planta.
-            </p>
-          </div>
-          <button
-            onClick={() => navigate('/produccion')}
-            style={cancelButtonStyle}
-          >
-            <ArrowLeft size={16} /> Volver al Panel
-          </button>
-        </div>
-
         <div style={cardStyle}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
+            <div>
+              <h1 style={{ marginTop: 0, marginBottom: "8px" }}>Generar Orden de Producción</h1>
+              <p style={{ color: "#6f5d56", margin: 0 }}>
+                Vincula un pedido de venta aprobado para iniciar su manufactura en la planta.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate('/produccion')}
+              style={{ ...cancelButtonStyle, display: "flex", alignItems: "center", gap: "6px", padding: "8px 12px" }}
+            >
+              <ArrowLeft size={16} /> Volver
+            </button>
+          </div>
+
           <form onSubmit={handleCrearOrden}>
           
             <label style={labelStyle}>Seleccionar Pedido Pendiente</label>

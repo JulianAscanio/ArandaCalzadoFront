@@ -56,8 +56,9 @@ export default function OrdersTable({ items, onOpenModal }) {
     <div style={{
       background: "white",
       borderRadius: "16px",
-      overflow: "hidden",
+      overflow: "visible",
       boxShadow: "0 4px 12px rgba(0, 0, 0, 0.03)",
+      marginBottom: "140px", // Reserva espacio al final de la página para evitar que el scroll salte
     }}>
       <table
         style={{
@@ -78,9 +79,9 @@ export default function OrdersTable({ items, onOpenModal }) {
         </thead>
 
         <tbody>
-          {items.map((item) => {
+          {items.map((item, index) => {
             const customer = item.customer_detail;
-            const user = customer?.user || {};
+            const customerName = customer?.full_name || customer?.name || customer?.user?.first_name || customer?.user?.username || "Cliente Desconocido";
             const badge = getBadgeStyles(item.status);
 
             return (
@@ -98,7 +99,7 @@ export default function OrdersTable({ items, onOpenModal }) {
                       <Building2 size={18} color="#4b3a35" />
                     </div>
                     <span style={{ fontWeight: '500', color: '#2c2620', fontSize: '14px' }}>
-                      {user.first_name || user.username || "Desconocido"} {user.last_name || ""}
+                      {customerName} {customer?.user?.last_name || ""}
                     </span>
                   </div>
                 </td>
@@ -259,7 +260,7 @@ const dropdownStyle = {
   boxShadow: "0 10px 24px rgba(0,0,0,0.12)",
   border: "1px solid #eee",
   overflow: "hidden",
-  zIndex: 20,
+  zIndex: 100,
 };
 
 const dropdownItemStyle = {

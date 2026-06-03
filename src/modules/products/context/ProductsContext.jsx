@@ -54,7 +54,7 @@ export function ProductsProvider({ children }) {
 
             if (response.ok) {
                 const data = await response.json();
-                setProducts((prev) => [...prev, data]);
+                await fetchProducts();
                 toast.success("Producto registrado exitosamente");
                 return data;
             } else {
@@ -111,9 +111,7 @@ export function ProductsProvider({ children }) {
             }
 
             const data = await response.json();
-            setProducts((prev) =>
-                prev.map((product) => (product.id === id ? data : product))
-            );
+            await fetchProducts();
             toast.success("Producto actualizado correctamente");
             return data;
         } catch (error) {

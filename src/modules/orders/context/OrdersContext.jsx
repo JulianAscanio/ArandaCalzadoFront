@@ -99,7 +99,7 @@ export function OrdersProvider({ children }) {
 
     const updateOrder = async (id, updatedOrder) => {
         const response = await fetch(`http://localhost:8000/api/pedidos/ordenes/${id}/`, {
-            method: "PUT",
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`

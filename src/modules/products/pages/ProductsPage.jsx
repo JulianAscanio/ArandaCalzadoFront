@@ -13,12 +13,17 @@ const HeelIcon = ({ color, size }) => (
 
 const getImageUrl = (imagePath) => {
   if (!imagePath) return null;
+  
+  if (typeof imagePath === 'object' && imagePath.url) imagePath = imagePath.url;
+  if (typeof imagePath !== 'string') return null;
+
   if (imagePath.startsWith('http') || imagePath.startsWith('data:')) {
     return imagePath;
   }
   // Remove leading slash if present to avoid double slashes
   const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
-  return `http://localhost:8000/${cleanPath}`;
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+  return `${baseUrl.replace(/\/+$/, '')}/${cleanPath}`;
 };
 
 export default function ProductsPage() {
@@ -125,7 +130,7 @@ export default function ProductsPage() {
                 </td>
               </tr>
             ) : (
-              filteredProducts.map((product) => (
+              filteredProducts.map((product, index) => (
                 <tr key={product.id}>
                   <td style={tdStyle}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
@@ -201,7 +206,12 @@ export default function ProductsPage() {
                       </button>
 
                       {openMenuId === product.id && (
-                        <div style={dropdownStyle}>
+                        <div style={{
+                          ...dropdownStyle,
+                          ...(index >= filteredProducts.length - 2 && filteredProducts.length > 3 
+                            ? { top: "auto", bottom: "100%", marginBottom: "8px" } 
+                            : {})
+                        }}>
                           <Link
                             to={`/productos/editar/${product.id}`}
                             style={dropdownItemStyle}

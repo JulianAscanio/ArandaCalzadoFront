@@ -1,23 +1,31 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { useOrders } from "../context/OrdersContext";
 
-export default function MovemmentModal({ order, onClose }) {
-    const { registerStage } = useOrders();
+export default function StageModal({ order, onClose }) {
+    const { updateOrder } = useOrders();
+    const [selectedStatus, setSelectedStatus] = useState(order.status);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const [stageName, setStageName] = useState();
-    const [hoveredButton, setHoveredButton] = useState(null);
+    const statuses = [
+        { id: "pending", label: "Pendiente", color: "#f39c12", bg: "#fdf5e6" },
+        { id: "in_production", label: "En Producción", color: "#3498db", bg: "#eaf2f8" },
+        { id: "finished", label: "Terminado", color: "#2ecc71", bg: "#e9f7ef" },
+        { id: "sent", label: "Enviado", color: "#9b59b6", bg: "#f4ecf7" }
+    ];
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        registerStage({
-            orderId: order.id,
-            orderName: order.name,
-            stageName,
-        });
-
-        alert("Estado registrado correctamente")
-        onClose();
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+        try {
+            await updateOrder(order.id, { status: selectedStatus });
+            toast.success("Estado actualizado con éxito");
+            onClose();
+        } catch (error) {
+            console.error(error);
+            toast.error("Ocurrió un error al cambiar el estado");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -25,8 +33,10 @@ export default function MovemmentModal({ order, onClose }) {
             <div style={modalStyle} onClick={(e) => e.stopPropagation()}>
                 <div style={headerStyle}>
                     <div>
-                        <h2 style={{ marginTop: 0, marginBottom: "4px", fontSize: "24px", fontWeight: "700" }}>Registrar movimiento</h2>
-                        <p style={{ color: "#8b7b78", marginBottom: 0, fontSize: "14px", fontWeight: "500" }}>{order.name}</p>
+                        <h2 style={{ marginTop: 0, marginBottom: "4px", fontSize: "24px", fontWeight: "700" }}>
+                            Cambiar Estado
+                        </h2>
+                        <p style={{ color: "#8b7b78", marginBottom: 0, fontSize: "14px", fontWeight: "500" }}>Actualizando pedido #{order.id}</p>
                     </div>
                     <button 
                         onClick={onClose}
@@ -37,107 +47,46 @@ export default function MovemmentModal({ order, onClose }) {
                     </button>
                 </div>
 
-                <form onSubmit={handleSubmit}>
-                    <label style={labelStyle}>Estados</label>
-
-                    <div style={{ display: "flex", gap: "12px", marginBottom: "24px" }}>
-                    <button
-                            type="button"
-                            onClick={() => setStageName("pendiente")}
-                            onMouseEnter={() => setHoveredButton("pendiente")}
-                            onMouseLeave={() => setHoveredButton(null)}
-                            style={{
-                                ...typeButtonStyle,
-                                backgroundColor:
-                                    stageName === "pendiente" ? "#b1223a" : hoveredButton === "pendiente" ? "#f0f0f0" : "#f5f5f5",
-                                color: stageName === "pendiente" ? "white" : "#2d1f20",
-                                borderColor: stageName === "pendiente" ? "#b1223a" : "#e8dcd2",
-                                boxShadow: stageName === "pendiente" ? "0 4px 12px rgba(177, 34, 58, 0.2)" : "0 2px 8px rgba(0, 0, 0, 0.04)",
-                                fontWeight: stageName === "pendiente" ? "600" : "500",
-                            }}
-                        >
-                            Pendiente
-                        </button>
-
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", marginBottom: "24px" }}>
+                    {statuses.map((st) => (
                         <button
-                            type="button"
-                            onClick={() => setStageName("en producción")}
-                            onMouseEnter={() => setHoveredButton("en producción")}
-                            onMouseLeave={() => setHoveredButton(null)}
+                            key={st.id}
+                            onClick={() => setSelectedStatus(st.id)}
                             style={{
-                                ...typeButtonStyle,
-                                backgroundColor:
-                                    stageName === "en producción" ? "#f39c12" : hoveredButton === "en producción" ? "#f0f0f0" : "#f5f5f5",
-                                color: stageName === "en producción" ? "white" : "#2d1f20",
-                                borderColor: stageName === "en producción" ? "#f39c12" : "#e8dcd2",
-                                boxShadow: stageName === "en producción" ? "0 4px 12px rgba(243, 156, 18, 0.2)" : "0 2px 8px rgba(0, 0, 0, 0.04)",
-                                fontWeight: stageName === "en producción" ? "600" : "500",
+                                padding: "16px",
+                                borderRadius: "12px",
+                                border: `2px solid ${selectedStatus === st.id ? st.color : "#e8ded8"}`,
+                                background: selectedStatus === st.id ? st.bg : "white",
+                                cursor: "pointer",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                gap: "8px",
+                                transition: "all 0.2s"
                             }}
                         >
-                            En Producción
+                            <span style={{ fontWeight: "600", color: selectedStatus === st.id ? st.color : "#6f5d56" }}>
+                                {st.label}
+                            </span>
                         </button>
+                    ))}
+                </div>
 
-                        <button
-                            type="button"
-                            onClick={() => setStageName("terminado")}
-                            onMouseEnter={() => setHoveredButton("terminado")}
-                            onMouseLeave={() => setHoveredButton(null)}
-                            style={{
-                                ...typeButtonStyle,
-                                backgroundColor:
-                                    stageName === "terminado" ? "#0066cc" : hoveredButton === "terminado" ? "#f0f0f0" : "#f5f5f5",
-                                color: stageName === "terminado" ? "white" : "#2d1f20",
-                                borderColor: stageName === "terminado" ? "#0066cc" : "#e8dcd2",
-                                boxShadow: stageName === "terminado" ? "0 4px 12px rgba(0, 102, 204, 0.2)" : "0 2px 8px rgba(0, 0, 0, 0.04)",
-                                fontWeight: stageName === "terminado" ? "600" : "500",
-                            }}
-                        >
-                            Terminado
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => setStageName("enviado")}
-                            onMouseEnter={() => setHoveredButton("enviado")}
-                            onMouseLeave={() => setHoveredButton(null)}
-                            style={{
-                                ...typeButtonStyle,
-                                backgroundColor:
-                                    stageName === "enviado" ? "#0f9d58" : hoveredButton === "enviado" ? "#f0f0f0" : "#f5f5f5",
-                                color: stageName === "enviado" ? "white" : "#2d1f20",
-                                borderColor: stageName === "enviado" ? "#0f9d58" : "#e8dcd2",
-                                boxShadow: stageName === "enviado" ? "0 4px 12px rgba(15, 157, 88, 0.2)" : "0 2px 8px rgba(0, 0, 0, 0.04)",
-                                fontWeight: stageName === "enviado" ? "600" : "500",
-                            }}
-                        >
-                            Enviado
-                        </button>
-                    </div>
-
-                    <div style={{ display: "flex", gap: "12px", marginTop: "28px" }}>
-                        <button 
-                            type="submit" 
-                            style={confirmButtonStyle}
-                            onMouseEnter={() => setHoveredButton("confirm")}
-                            onMouseLeave={() => setHoveredButton(null)}
-                        >
-                            Confirmar
-                        </button>
-
-                        <button 
-                            type="button" 
-                            onClick={onClose} 
-                            style={{
-                                ...cancelButtonStyle,
-                                background: hoveredButton === "cancel" ? "#e8dcd2" : "#f5f0ed",
-                            }}
-                            onMouseEnter={() => setHoveredButton("cancel")}
-                            onMouseLeave={() => setHoveredButton(null)}
-                        >
-                            Cancelar
-                        </button>
-                    </div>
-                </form>
+                <div style={{ display: "flex", gap: "12px" }}>
+                    <button 
+                        onClick={handleSubmit} 
+                        disabled={isSubmitting}
+                        style={{ flex: 1, padding: "14px", background: "#b1223a", color: "white", border: "none", borderRadius: "10px", fontWeight: "600", cursor: isSubmitting ? "not-allowed" : "pointer" }}
+                    >
+                        {isSubmitting ? "Guardando..." : "Confirmar Estado"}
+                    </button>
+                    <button 
+                        onClick={onClose} 
+                        style={{ flex: 1, padding: "14px", background: "#e8ded8", color: "#4b3a35", border: "none", borderRadius: "10px", fontWeight: "600", cursor: "pointer" }}
+                    >
+                        Cancelar
+                    </button>
+                </div>
             </div>
         </div>
     );

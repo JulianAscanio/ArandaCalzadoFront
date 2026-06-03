@@ -4,6 +4,22 @@ import AppLayout from "../../../shared/layout/AppLayout";
 import { useProducts } from "../context/ProductsContext";
 import { useInventory } from "../../inventory/context/InventoryContext";
 import { Upload, X } from "lucide-react";
+import { MdArrowBack as ArrowLeft } from "react-icons/md";
+
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  
+  if (typeof imagePath === 'object' && imagePath.url) imagePath = imagePath.url;
+  if (typeof imagePath !== 'string') return null;
+
+  if (imagePath.startsWith('http') || imagePath.startsWith('data:')) {
+    return imagePath;
+  }
+  // Remove leading slash if present to avoid double slashes
+  const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+  const baseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+  return `${baseUrl.replace(/\/+$/, '')}/${cleanPath}`;
+};
 
 export default function NewProductPage() {
   const navigate = useNavigate();
@@ -24,6 +40,7 @@ export default function NewProductPage() {
     available_stock: "0",
     description: "",
     image: null,
+    imageFile: null,
   });
 
   useEffect(() => {
@@ -42,6 +59,7 @@ export default function NewProductPage() {
           available_stock: String(productToEdit.available_stock ?? "0"),
           description: productToEdit.description || "",
           image: productToEdit.image || null,
+          imageFile: null,
         });
       }
     }
@@ -60,14 +78,14 @@ export default function NewProductPage() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setForm((prev) => ({ ...prev, image: reader.result }));
+        setForm((prev) => ({ ...prev, image: reader.result, imageFile: file }));
       };
       reader.readAsDataURL(file);
     }
   };
 
   const removeImage = () => {
-    setForm((prev) => ({ ...prev, image: null }));
+    setForm((prev) => ({ ...prev, image: null, imageFile: null }));
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -87,22 +105,31 @@ export default function NewProductPage() {
       return;
     }
 
-    const payload = {
-      name: form.name,
-      reference: form.reference,
-      heel_height: form.heel_height,
-      price: Number(form.price),
-      material: form.material ? Number(form.material) : null,
-      available_stock: Number(form.available_stock),
-      description: form.description,
-      image: form.image,
-    };
+    const formData = new FormData();
+    formData.append("name", form.name);
+    formData.append("reference", form.reference);
+    formData.append("heel_height", form.heel_height);
+    formData.append("price", form.price);
+    if (form.material) {
+      formData.append("material", form.material);
+    } else {
+      formData.append("material", "");
+    }
+    formData.append("available_stock", form.available_stock);
+    formData.append("description", form.description || "");
+
+    // Solo adjuntamos la imagen si el usuario subió un archivo nuevo o si eliminó la foto
+    if (form.imageFile) {
+      formData.append("image", form.imageFile);
+    } else if (form.image === null) {
+      formData.append("image", "");
+    }
 
     try {
       if (isEditMode) {
-        await updateProduct(id, payload);
+        await updateProduct(id, formData);
       } else {
-        await addProduct(payload);
+        await addProduct(formData);
       }
       navigate("/productos");
     } catch (error) {
@@ -114,14 +141,25 @@ export default function NewProductPage() {
     <AppLayout title={isEditMode ? "Editar producto" : "Nuevo producto"}>
       <div style={pageStyle}>
         <div style={cardStyle}>
-          <h1 style={{ marginTop: 0, marginBottom: "8px" }}>
-            {isEditMode ? "Editar producto" : "Registrar nuevo producto"}
-          </h1>
-          <p style={{ color: "#6f5d56", marginBottom: "24px" }}>
-            {isEditMode
-              ? "Actualiza la información técnica del calzado"
-              : "Agrega un nuevo diseño de zapato al catálogo"}
-          </p>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
+            <div>
+              <h1 style={{ marginTop: 0, marginBottom: "8px" }}>
+                {isEditMode ? "Editar producto" : "Registrar nuevo producto"}
+              </h1>
+              <p style={{ color: "#6f5d56", margin: 0 }}>
+                {isEditMode
+                  ? "Actualiza la información técnica del calzado"
+                  : "Agrega un nuevo diseño de zapato al catálogo"}
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => navigate("/productos")}
+              style={{ ...cancelButtonStyle, display: "flex", alignItems: "center", gap: "6px", padding: "8px 12px" }}
+            >
+              <ArrowLeft size={16} /> Volver
+            </button>
+          </div>
 
           <form onSubmit={handleSubmit}>
             <div style={{ marginBottom: "24px" }}>

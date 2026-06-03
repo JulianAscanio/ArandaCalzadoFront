@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AppLayout from "../../../shared/layout/AppLayout";
 import { useInventory } from "../context/InventoryContext";
+import { MdArrowBack as ArrowLeft } from "react-icons/md";
 import toast from "react-hot-toast";
 
 function toDateInputValue(value) {
@@ -154,14 +155,25 @@ export default function NewMaterialPage() {
     <AppLayout title={isEditMode ? "Editar material" : "Nuevo material"}>
       <div style={pageStyle}>
         <div style={cardStyle}>
-          <h1 style={{ marginTop: 0, marginBottom: "8px" }}>
-            {isEditMode ? "Editar material" : "Registrar nuevo material"}
-          </h1>
-          <p style={{ color: "#6f5d56", marginBottom: "24px" }}>
-            {isEditMode
-              ? "Actualiza la información del material"
-              : "Agrega un nuevo material al inventario"}
-          </p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
+          <div>
+            <h1 style={{ marginTop: 0, marginBottom: "8px" }}>
+              {isEditMode ? "Editar material" : "Registrar nuevo material"}
+            </h1>
+            <p style={{ color: "#6f5d56", margin: 0 }}>
+              {isEditMode
+                ? "Actualiza la información del material"
+                : "Agrega un nuevo material al inventario"}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => navigate("/inventario")}
+            style={{ ...cancelButtonStyle, display: "flex", alignItems: "center", gap: "6px", padding: "8px 12px" }}
+          >
+            <ArrowLeft size={16} /> Volver
+          </button>
+        </div>
 
           <form onSubmit={handleSubmit}>
             <label style={labelStyle}>Nombre del material</label>

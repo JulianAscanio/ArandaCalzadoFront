@@ -6,7 +6,7 @@ import { ProductionFilters } from '../components/ProductionFilters';
 import { ProductionModal } from '../components/ProductionModal';
 import AppLayout from "../../../shared/layout/AppLayout";
 import { useNavigate } from 'react-router-dom';
-import { MdAdd as Plus } from 'react-icons/md';
+import { MdAdd as Plus, MdArrowBack as ArrowLeft } from 'react-icons/md';
 import toast from 'react-hot-toast';
 
 export const ProductionPage = () => {
@@ -63,9 +63,27 @@ export const ProductionPage = () => {
           marginBottom: "14px",
         }}
       >
-        <div>
-          <h1 style={{ marginBottom: "10px" }}>Control de Producción</h1>
-          <p style={{ color: "#6f5d56" }}>Gestión operativa del taller y trazabilidad de calzado</p>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <button
+            onClick={() => navigate('/')}
+            title="Volver al inicio"
+            style={{
+              background: "#e8ded8",
+              border: "none",
+              borderRadius: "10px",
+              padding: "10px",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              color: "#4b3a35"
+            }}
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <div>
+            <h1 style={{ marginBottom: "10px", marginTop: 0 }}>Control de Producción</h1>
+            <p style={{ color: "#6f5d56", margin: 0 }}>Gestión operativa del taller y trazabilidad de calzado</p>
+          </div>
         </div>
         <button
           onClick={() => navigate('/produccion/new')}

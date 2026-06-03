@@ -64,6 +64,57 @@ export const ProductionProvider = ({ children }) => {
         }
     };
 
+    // RF: Crear una nueva orden de producción desde un pedido
+    const createProductionOrder = async (payload) => {
+        if (useMockData) {
+            return true;
+        }
+
+        try {
+            const headers = { 'Content-Type': 'application/json' };
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            const response = await fetch(`http://localhost:8000/api/produccion/`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(payload)
+            });
+
+            if (response.status === 401) {
+                logout();
+                return false;
+            }
+
+            if (response.ok) {
+                await fetchProductionOrders();
+                return true;
+            } else {
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    const errorData = await response.json();
+                    console.error("Detalles del Bad Request (400):", errorData);
+                    
+                    // Extraemos los mensajes de error de DRF para que sean visibles
+                    let errorMsg = errorData.error;
+                    if (!errorMsg && typeof errorData === 'object') {
+                        errorMsg = Object.values(errorData).flat().join(" | ");
+                    }
+                    toast.error(`Error: ${errorMsg || "Datos inválidos"}`);
+                } else {
+                    const errorText = await response.text();
+                    console.error("HTML Error Response from Django:", errorText);
+                    toast.error(`Error del servidor (${response.status}). Revisa la consola.`);
+                }
+            }
+        } catch (error) {
+            console.error("Error al crear la producción en el backend:", error);
+            toast.error("Error de conexión al crear la producción.");
+        }
+        return false;
+    };
+
     // RF13 y RF14: Generar orden de producción y asociar materias primas
     const startProductionOrder = async (orderId, materialsUsed) => {
         if (useMockData) {
@@ -166,6 +217,7 @@ export const ProductionProvider = ({ children }) => {
             ordersInProduction,
             loading,
             fetchProductionOrders,
+            createProductionOrder,
             startProductionOrder,
             finishProductionOrder
         }}>
