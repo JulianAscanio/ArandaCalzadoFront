@@ -9,7 +9,7 @@ export default function NewOrderPage() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const { orders, customers, products, addOrder, updateOrder } = useOrders();
+  const { orders, customers, products, addOrder, updateOrder, fetchOrders } = useOrders();
 
   const isEditMode = Boolean(id);
 
@@ -22,7 +22,7 @@ export default function NewOrderPage() {
 
   const [items, setItems] = useState([]);
 
-  // Local state for the shoe entry form inside orders
+  // Cargar datos del pedido a editar (si estamos en modo edición)
   const [selectedProduct, setSelectedProduct] = useState("");
   const [selectedSize, setSelectedSize] = useState("38");
   const [selectedQuantity, setSelectedQuantity] = useState(1);
@@ -45,7 +45,7 @@ export default function NewOrderPage() {
     }
   }, [id, isEditMode, orders]);
 
-  // Calculate total automatically when items list changes
+  // Recalcular total cada vez que cambian los ítems
   useEffect(() => {
     const sum = items.reduce((acc, item) => {
       const price = Number(item.unit_price || item.product_detail?.price || 0);
@@ -75,7 +75,7 @@ export default function NewOrderPage() {
     const prod = products.find(p => String(p.id) === String(selectedProduct));
     if (!prod) return;
 
-    // Check if item with same product and size already exists in current list
+    // Verificar si ya existe el mismo producto con la misma talla en la lista de ítems
     const existingIndex = items.findIndex(
       (item) => String(item.product || item.product_detail?.id) === String(selectedProduct) &&
                 Number(item.size) === Number(selectedSize)
@@ -204,22 +204,7 @@ export default function NewOrderPage() {
                   })}
                 </select>
               </div>
-
-              <div>
-                <label style={labelStyle}>Estado del Pedido *</label>
-                <select
-                  style={inputStyle}
-                  name="status"
-                  value={form.status}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="pending">Pendiente</option>
-                  <option value="in_production">En Producción</option>
-                  <option value="finished">Terminado</option>
-                  <option value="sent">Enviado</option>
-                </select>
-              </div>
+              
             </div>
 
             <div style={{ ...rowStyle, gridTemplateColumns: "1fr" }}>

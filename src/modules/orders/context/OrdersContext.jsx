@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "../../auth/context/AuthContext";
+import toast from "react-hot-toast";
 
 export const OrdersContext = createContext();
 
@@ -166,8 +167,31 @@ export function OrdersProvider({ children }) {
         setStages([]);
     }
 
+    const markAsSent = async (id) => {
+        try {
+            const response = await fetch(`http://localhost:8000/api/pedidos/ordenes/${id}/marcar_enviado/`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                toast.success("Pedido marcado como enviado exitosamente.");
+                fetchOrders(); // Recarga la tabla de pedidos
+            } else {
+                const errorData = await response.json();
+                toast.error(errorData.error || "No se pudo marcar el pedido como enviado.");
+            }
+        } catch (error) {
+            console.error("Error al enviar el pedido:", error);
+            toast.error("Error de conexión al marcar como enviado.");
+        }
+    };
+
     return (
-        <OrdersContext.Provider value={{ orders, customers, products, stages, addOrder, deleteOrder, updateOrder, registerStage, resetOrdersData }}>
+        <OrdersContext.Provider value={{ orders, customers, products, stages, fetchOrders, addOrder, deleteOrder, updateOrder, registerStage, resetOrdersData, markAsSent }}>
             {children}
         </OrdersContext.Provider>
     );

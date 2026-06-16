@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { MdArrowBack as ArrowLeft } from "react-icons/md";
 import SearchBar from "../components/SearchBar";
@@ -14,7 +14,12 @@ export default function OrdersPage() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const navigate = useNavigate();
 
-  const { orders } = useOrders();
+  const { orders, fetchOrders } = useOrders();
+
+  // Forzar recarga de datos al montar el componente para ver estados actualizados
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   const getStatusLabel = (status) => {
     const map = {

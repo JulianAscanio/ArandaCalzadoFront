@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { MoreVertical, Pencil, Trash2, ArrowUpDown, Building2 } from "lucide-react";
+import { MoreVertical, Pencil, Trash2, Building2, Truck } from "lucide-react";
 import { useOrders } from "../context/OrdersContext";
 
 const getStatusLabel = (status) => {
@@ -28,14 +28,20 @@ const getBadgeStyles = (status) => {
   }
 };
 
-export default function OrdersTable({ items, onOpenModal }) {
-  const { deleteOrder } = useOrders();
+export default function OrdersTable({ items }) {
+  const { deleteOrder, markAsSent } = useOrders();
   const [openMenuId, setOpenMenuId] = useState(null);
 
   const handleDelete = (id) => {
     if (window.confirm("¿Estás seguro que vas a eliminar permanentemente esto?")) {
       deleteOrder(id);
       setOpenMenuId(null);
+    }
+  };
+
+  const handleMarkAsSent = (id) => {
+    if (window.confirm("¿Confirmas que este pedido ya fue despachado/enviado al cliente?")) {
+      markAsSent(id);
     }
   };
 
@@ -149,14 +155,17 @@ export default function OrdersTable({ items, onOpenModal }) {
 
                 <td style={tdStyle}>
                   <div style={actionsWrapperStyle}>
-                    <button
-                      onClick={() => onOpenModal(item)}
-                      className="icon-action-button icon-action-button--move"
-                      title="Cambio de Estado"
-                      aria-label="Cambio de Estado"
-                    >
-                      <ArrowUpDown size={20} strokeWidth={2.6} />
-                    </button>
+
+                    {item.status === 'finished' && (
+                      <button
+                        onClick={() => handleMarkAsSent(item.id)}
+                        title="Marcar como Despachado / Enviado"
+                        aria-label="Marcar como Enviado"
+                        style={{ background: "none", border: "none", cursor: "pointer", display: "flex", padding: "4px" }}
+                      >
+                        <Truck size={22} strokeWidth={2.2} color="#0f9d58" />
+                      </button>
+                    )}
 
                     <div style={{ position: "relative" }}>
                       <button
