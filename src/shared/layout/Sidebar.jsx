@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../modules/auth/context/AuthContext";
-import { Package, ShoppingCart, Factory, LogOut, Grid, Users } from "lucide-react";
+import { Package, ShoppingCart, Factory, LogOut, Grid, Users, BarChart3 } from "lucide-react";
 
 export default function Sidebar({ isOpen }) {
   const { logout } = useAuth();
@@ -40,6 +40,11 @@ export default function Sidebar({ isOpen }) {
           <NavLink to="/produccion" className={({ isActive }) => isActive ? "sidebar-link active" : "sidebar-link"} style={{ gap: "14px" }}>
             <Factory size={20} strokeWidth={2.5} />
             <span>Producción</span>
+          </NavLink>
+
+          <NavLink to="/reportes" className={({ isActive }) => isActive ? "sidebar-link active" : "sidebar-link"} style={{ gap: "14px" }}>
+            <BarChart3 size={20} strokeWidth={2.5} />
+            <span>Reportes</span>
           </NavLink>
         </nav>
       </div>

@@ -4,6 +4,7 @@ import { ordersRoutes } from "../../modules/orders/routers/ordersRouters";
 import { productionRouters } from "../../modules/production/routers/productionRouters";
 import { productsRoutes } from "../../modules/products/routers/productsRouters";
 import { customerRoutes } from "../../modules/customer/routes/CustomerRoutes";
+import { reportsRoutes } from "../../modules/reports/routers/reportsRouters";
 import Login from "../../modules/auth/pages/Login";
 import ForgotPassword from "../../modules/auth/pages/ForgotPassword";
 import ProtectedRoute from "./ProtectedRoute";
@@ -20,6 +21,7 @@ export default function AppRouter() {
         {productionRouters}
         {productsRoutes}
         {customerRoutes}
+        {reportsRoutes}
       </Route>
     </Routes>
   );
