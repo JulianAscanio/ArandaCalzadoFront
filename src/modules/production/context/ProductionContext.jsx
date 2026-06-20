@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { useAuth } from '../../auth/context/AuthContext';
+import { useAuth, API_BASE_URL } from '../../auth/context/AuthContext';
 
 // Creación del contexto de producción
 const ProductionContext = createContext();
@@ -38,7 +38,7 @@ export const ProductionProvider = ({ children }) => {
         setLoading(true);
         try {
             const headers = { 'Authorization': `Bearer ${token}` };
-            const response = await fetch('http://localhost:8000/api/produccion/', { headers });
+            const response = await fetch(`${API_BASE_URL}/api/produccion/`, { headers });
             
             if (response.status === 401) {
                 logout();
@@ -76,7 +76,7 @@ export const ProductionProvider = ({ children }) => {
                 headers['Authorization'] = `Bearer ${token}`;
             }
 
-            const response = await fetch(`http://localhost:8000/api/produccion/`, {
+            const response = await fetch(`${API_BASE_URL}/api/produccion/`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify(payload)
@@ -132,7 +132,7 @@ export const ProductionProvider = ({ children }) => {
                 headers['Authorization'] = `Bearer ${token}`;
             }
 
-            const response = await fetch(`http://localhost:8000/api/produccion/${orderId}/iniciar_produccion/`, {
+            const response = await fetch(`${API_BASE_URL}/api/produccion/${orderId}/iniciar_produccion/`, {
                 method: 'POST',
                 headers: headers,
                 body: JSON.stringify(materialsUsed)
@@ -177,7 +177,7 @@ export const ProductionProvider = ({ children }) => {
                 headers['Authorization'] = `Bearer ${token}`;
             }
 
-            const response = await fetch(`http://localhost:8000/api/produccion/${orderId}/finalizar_produccion/`, {
+            const response = await fetch(`${API_BASE_URL}/api/produccion/${orderId}/finalizar_produccion/`, {
                 method: 'POST',
                 headers: headers
             });

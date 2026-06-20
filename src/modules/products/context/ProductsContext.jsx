@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useAuth } from "../../auth/context/AuthContext";
+import { useAuth, API_BASE_URL } from "../../auth/context/AuthContext";
 import toast from "react-hot-toast";
 
 export const ProductsContext = createContext();
@@ -16,7 +16,7 @@ export function ProductsProvider({ children }) {
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch("http://localhost:8000/api/inventario/productos/", {
+            const response = await fetch(`${API_BASE_URL}/api/inventario/productos/`, {
                 headers: {
                     "Authorization": `Bearer ${token}`
                 }
@@ -46,7 +46,7 @@ export function ProductsProvider({ children }) {
                 headers["Content-Type"] = "application/json";
             }
 
-            const response = await fetch("http://localhost:8000/api/inventario/productos/", {
+            const response = await fetch(`${API_BASE_URL}/api/inventario/productos/`, {
                 method: "POST",
                 headers,
                 body: isFormData ? newProduct : JSON.stringify(newProduct)
@@ -69,7 +69,7 @@ export function ProductsProvider({ children }) {
 
     const deleteProduct = async (id) => {
         try {
-            const response = await fetch(`http://localhost:8000/api/inventario/productos/${id}/`, {
+            const response = await fetch(`${API_BASE_URL}/api/inventario/productos/${id}/`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -98,7 +98,7 @@ export function ProductsProvider({ children }) {
                 headers["Content-Type"] = "application/json";
             }
 
-            const response = await fetch(`http://localhost:8000/api/inventario/productos/${id}/`, {
+            const response = await fetch(`${API_BASE_URL}/api/inventario/productos/${id}/`, {
                 method: "PUT",
                 headers,
                 body: isFormData ? updatedProduct : JSON.stringify(updatedProduct)

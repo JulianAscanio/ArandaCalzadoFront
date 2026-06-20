@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useAuth } from "../../auth/context/AuthContext";
+import { useAuth, API_BASE_URL } from "../../auth/context/AuthContext";
 import toast from "react-hot-toast";
 
 export const InventoryContext = createContext();
@@ -12,7 +12,7 @@ export function InventoryProvider({ children }) {
 
     const fetchMaterials = async () => {
         try {
-            const response = await fetch("http://localhost:8000/api/inventario/materiales/", {
+            const response = await fetch(`${API_BASE_URL}/api/inventario/materiales/`, {
                 headers: {
                     "Authorization": `Bearer ${token}`
                 }
@@ -33,7 +33,7 @@ export function InventoryProvider({ children }) {
 
     const fetchMovements = async () => {
         try {
-            const response = await fetch("http://localhost:8000/api/inventario/movimientos/", {
+            const response = await fetch(`${API_BASE_URL}/api/inventario/movimientos/`, {
                 headers: {
                     "Authorization": `Bearer ${token}`
                 }
@@ -61,7 +61,7 @@ export function InventoryProvider({ children }) {
 
     const addMaterial = async (newMaterial) => {
         try {
-            const response = await fetch("http://localhost:8000/api/inventario/materiales/", {
+            const response = await fetch(`${API_BASE_URL}/api/inventario/materiales/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -87,7 +87,7 @@ export function InventoryProvider({ children }) {
 
     const deleteMaterial = async (id) => {
         try {
-            const response = await fetch(`http://localhost:8000/api/inventario/materiales/${id}/`, {
+            const response = await fetch(`${API_BASE_URL}/api/inventario/materiales/${id}/`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -105,7 +105,7 @@ export function InventoryProvider({ children }) {
     };
 
     const updateMaterial = async (id, updatedMaterial) => {
-        const response = await fetch(`http://localhost:8000/api/inventario/materiales/${id}/`, {
+        const response = await fetch(`${API_BASE_URL}/api/inventario/materiales/${id}/`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -144,7 +144,7 @@ export function InventoryProvider({ children }) {
         }
 
         try {
-            const response = await fetch(`http://localhost:8000/api/inventario/materiales/${materialId}/`, {
+            const response = await fetch(`${API_BASE_URL}/api/inventario/materiales/${materialId}/`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProduction } from '../context/ProductionContext';
-import { useAuth } from '../../auth/context/AuthContext';
+import { useAuth, API_BASE_URL } from '../../auth/context/AuthContext';
 import AppLayout from "../../../shared/layout/AppLayout";
 import { MdArrowBack as ArrowLeft } from 'react-icons/md';
 import toast from 'react-hot-toast';
@@ -22,7 +22,7 @@ export const NewProductionPage = () => {
     const cargarPedidosDisponibles = async () => {
       try {
         const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
-        const response = await fetch('http://localhost:8000/api/produccion/pedidos_pendientes/', { headers });
+        const response = await fetch(`${API_BASE_URL}/api/produccion/pedidos_pendientes/`, { headers });
         if (response.ok) {
           const data = await response.json();
           setPedidosPendientes(data);

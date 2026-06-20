@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useAuth } from "../../auth/context/AuthContext";
+import { useAuth, API_BASE_URL } from "../../auth/context/AuthContext";
 import toast from "react-hot-toast";
 
 export const ReportsContext = createContext();
@@ -18,10 +18,10 @@ export function ReportsProvider({ children }) {
         try {
             const headers = { "Authorization": `Bearer ${token}` };
             const [matRes, movRes, ordRes, prodRes] = await Promise.all([
-                fetch("http://localhost:8000/api/inventario/materiales/", { headers }),
-                fetch("http://localhost:8000/api/inventario/movimientos/", { headers }),
-                fetch("http://localhost:8000/api/pedidos/ordenes/", { headers }),
-                fetch("http://localhost:8000/api/produccion/", { headers }),
+                fetch(`${API_BASE_URL}/api/inventario/materiales/`, { headers }),
+                fetch(`${API_BASE_URL}/api/inventario/movimientos/`, { headers }),
+                fetch(`${API_BASE_URL}/api/pedidos/ordenes/`, { headers }),
+                fetch(`${API_BASE_URL}/api/produccion/`, { headers }),
             ]);
 
             if (ordRes.status === 401) {

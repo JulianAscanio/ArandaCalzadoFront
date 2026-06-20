@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useAuth } from "../../auth/context/AuthContext";
+import { useAuth, API_BASE_URL } from "../../auth/context/AuthContext";
 import toast from "react-hot-toast";
 
 export const OrdersContext = createContext();
@@ -19,9 +19,9 @@ export function OrdersProvider({ children }) {
         try {
             const headers = { "Authorization": `Bearer ${token}` };
             const [ordersRes, customersRes, productsRes] = await Promise.all([
-                fetch("http://localhost:8000/api/pedidos/ordenes/", { headers }),
-                fetch("http://localhost:8000/api/usuarios/customers/", { headers }),
-                fetch("http://localhost:8000/api/inventario/productos/", { headers })
+                fetch(`${API_BASE_URL}/api/pedidos/ordenes/`, { headers }),
+                fetch(`${API_BASE_URL}/api/usuarios/customers/`, { headers }),
+                fetch(`${API_BASE_URL}/api/inventario/productos/`, { headers })
             ]);
 
             if (ordersRes.status === 401) {
@@ -58,7 +58,7 @@ export function OrdersProvider({ children }) {
 
     const addOrder = async (newOrder) => {
         try {
-            const response = await fetch("http://localhost:8000/api/pedidos/ordenes/", {
+            const response = await fetch(`${API_BASE_URL}/api/pedidos/ordenes/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -84,7 +84,7 @@ export function OrdersProvider({ children }) {
 
     const deleteOrder = async (id) => {
         try {
-            const response = await fetch(`http://localhost:8000/api/pedidos/ordenes/${id}/`, {
+            const response = await fetch(`${API_BASE_URL}/api/pedidos/ordenes/${id}/`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${token}`
@@ -99,7 +99,7 @@ export function OrdersProvider({ children }) {
     };
 
     const updateOrder = async (id, updatedOrder) => {
-        const response = await fetch(`http://localhost:8000/api/pedidos/ordenes/${id}/`, {
+        const response = await fetch(`${API_BASE_URL}/api/pedidos/ordenes/${id}/`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
@@ -131,7 +131,7 @@ export function OrdersProvider({ children }) {
         }
 
         try {
-            const response = await fetch(`http://localhost:8000/api/pedidos/ordenes/${orderId}/`, {
+            const response = await fetch(`${API_BASE_URL}/api/pedidos/ordenes/${orderId}/`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -169,7 +169,7 @@ export function OrdersProvider({ children }) {
 
     const markAsSent = async (id) => {
         try {
-            const response = await fetch(`http://localhost:8000/api/pedidos/ordenes/${id}/marcar_enviado/`, {
+            const response = await fetch(`${API_BASE_URL}/api/pedidos/ordenes/${id}/marcar_enviado/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

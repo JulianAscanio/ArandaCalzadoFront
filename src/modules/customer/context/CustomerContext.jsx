@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { useAuth } from "../../auth/context/AuthContext";
+import { useAuth, API_BASE_URL } from "../../auth/context/AuthContext";
 import toast from "react-hot-toast";
 
 export const CustomerContext = createContext();
@@ -10,7 +10,7 @@ export function CustomerProvider({ children }) {
 
     const fetchCustomers = async () => {
         try {
-            const response = await fetch("http://localhost:8000/api/usuarios/customers/", {
+            const response = await fetch(`${API_BASE_URL}/api/usuarios/customers/`, {
                 headers: {
                     "Authorization": `Bearer ${token}`
                 }
@@ -43,7 +43,7 @@ export function CustomerProvider({ children }) {
 
     const addCustomer = async (customerPayload) => {
         try {
-            const response = await fetch("http://localhost:8000/api/usuarios/customers/", {
+            const response = await fetch(`${API_BASE_URL}/api/usuarios/customers/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
